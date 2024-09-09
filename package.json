@@ -1,18 +1,25 @@
 {
-  "dependencies": {
-    "express": "^4.19.2",
-    "oracledb": "^6.6.0",
-    "sequelize": "^6.37.3"
-  },
   "name": "fazbear",
   "version": "1.0.0",
+  "description": "",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "oracledb": "^6.6.0",
+    "pg": "^8.12.0",
+    "sequelize": "^6.37.3",
+    "sequelize-oracle": "^3.3.2-0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "description": ""
+  "license": "ISC"
 }
+
