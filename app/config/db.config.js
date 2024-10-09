@@ -1,15 +1,13 @@
 const env = require('./env.js');
-
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize({
+const oracledb = require('oracledb');
+
+const sequelize = new Sequelize(env.DB_NAME, env.DB_USER, env.DB_PASSWORD, {
+  host: env.DB_HOST,
   dialect: 'oracle',
-  username: env.DB_USER, // Cambia a DB_USER
-  password: env.DB_PASSWORD, // Cambia a DB_PASSWORD
-  host: env.DB_HOST, // Cambia a DB_HOST
-  port: env.DB_PORT, // Cambia a DB_PORT
-  database: env.DB_NAME, // Cambia a DB_NAME
+  dialectModule: oracledb,
   dialectOptions: {
-    // Configuraciones adicionales específicas para Oracle si es necesario
+    connectString: `(description=(retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=${env.DB_PORT})(host=${env.DB_HOST}))(connect_data=(service_name=${env.DB_NAME}))(security=(ssl_server_dn_match=yes)))`
   },
   pool: {
     max: env.pool.max,

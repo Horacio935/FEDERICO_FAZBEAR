@@ -12,20 +12,20 @@ module.exports = (sequelize, Sequelize) => {
 	       },
 	  Nombre: {
 	    type: Sequelize.STRING,
-            field: 'NOMBRE1'
+            field: 'NOMBRE'
   	        },
-	  Nombre2: {
+	  /*Nombre2: {
 	    type: Sequelize.STRING,
             field: 'NOMBRE2'
-	           },
+	           },*/
 	  Apellido: {
 	    type: Sequelize.STRING,
-            field: 'APELLIDO1'
+            field: 'APELLIDO'
               },
-    Apellido2: {
+    /*Apellido2: {
             type: Sequelize.STRING,
             field: 'APELLIDO2'
-               },
+               },*/
     Direccion: {
             type: Sequelize.STRING,
             field: 'DIRECCION'

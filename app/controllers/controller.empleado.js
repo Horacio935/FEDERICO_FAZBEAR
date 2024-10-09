@@ -12,9 +12,9 @@ exports.create = async (req, res) => {
             empleado.id = req.body.id;
             empleado.DPI = req.body.DPI;
             empleado.Nombre = req.body.Nombre,
-            empleado.Nombre2 = req.body.Nombre2,
+            //empleado.Nombre2 = req.body.Nombre2,
             empleado.Apellido = req.body.Apellido,
-            empleado.Apellido2 = req.body.Apellido2,
+            //empleado.Apellido2 = req.body.Apellido2,
             empleado.Direccion = req.body.Direccion,
             empleado.Telefono = req.body.Telefono,
             empleado.Fecha_Nacimiento = moment(req.body.Fecha_Nacimiento).format('YYYY-MM-DD'),
@@ -99,9 +99,9 @@ exports.updateById = async (req, res) => {
         const updatedObject = {
             DPI: req.body.DPI,
             Nombre: req.body.Nombre,
-            Nombre2: req.body.Nombre2,
+            //Nombre2: req.body.Nombre2,
             Apellido: req.body.Apellido,
-            Apellido2: req.body.Apellido2,
+            //Apellido2: req.body.Apellido2,
             Direccion: req.body.Direccion,
             Telefono: req.body.Telefono,
             Fecha_Nacimiento: req.body.Fecha_Nacimiento,

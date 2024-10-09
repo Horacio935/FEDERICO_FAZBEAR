@@ -1,6 +1,6 @@
 const express = require('express');
-const oracledb = require('oracledb');
-const config = require('./app/config/env'); // archivo env.js
+const db = require('./app/config/db.config.js'); // Importa la configuración de la base de datos
+const config = require('./app/config/env.js'); // Archivo env.js
 
 const app = express();
 const PORT = process.env.PORT || 3000; // Puerto para Express
@@ -19,31 +19,18 @@ app.get('/', (req, res) => {
   res.send('Servidor funcionando');
 });
 
-async function init() {
-  let connection;
-
+// Inicializa la conexión a la base de datos usando Sequelize
+const init = async () => {
   try {
-    connection = await oracledb.getConnection({
-      user: config.DB_USER,
-      password: config.DB_PASSWORD,
-      connectString: `${config.DB_HOST}:${config.DB_PORT}/${config.DB_NAME}`
-    });
-
+    await db.sequelize.authenticate();
     console.log('Conectado a Oracle Database');
-    const result = await connection.execute('SELECT * FROM usuario');
-    console.log(result.rows);
+    // Aquí puedes realizar una consulta de prueba si lo deseas
+    //const result = await db.Empleado.findAll(); // Ejemplo de consulta
+    //console.log(result); // Muestra los datos en la consola
   } catch (err) {
-    console.error('Error al conectar:', err);
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error('Error al cerrar la conexión:', err);
-      }
-    }
+    console.error('Error al conectar a la base de datos:', err);
   }
-}
+};
 
 // Inicializa la conexión a la base de datos
 init();
@@ -52,4 +39,3 @@ init();
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en puerto ${PORT}`);
 });
-
