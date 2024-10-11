@@ -1,11 +1,14 @@
 const express = require('express');
 const db = require('./app/config/db.config.js'); // Importa la configuración de la base de datos
 const config = require('./app/config/env.js'); // Archivo env.js
+const cors = require('cors');
+
 
 const app = express();
-const PORT = process.env.PORT || 3000; // Puerto para Express
+const PORT = process.env.PORT || 4000; // Puerto para Express
 
 // Middleware para parsear JSON
+app.use(cors());
 app.use(express.json());
 
 // Importar las rutas
