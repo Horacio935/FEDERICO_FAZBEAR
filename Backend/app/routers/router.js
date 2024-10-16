@@ -117,6 +117,17 @@ router.get('/cliente/onebyid/:id', cliente.getClienteById);
 router.put('/cliente/update/:id', cliente.updateById);
 router.delete('/cliente/delete/:id', cliente.deleteById);
 
+const DetalleFactura = require('../controllers/controller.factura.js');
+
+// Ruta para realizar la compra
+router.post('/carrito/compras', DetalleFactura.realizarCompra);
+router.get('/clientes/:idCliente/facturas', DetalleFactura.retrieveFacturasByCliente);
+
+const menuGeneral = require('../controllers/controller.menugeneral.js');
+
+router.get('/menugeneral/all', menuGeneral.retrieveAllMenuGenerals);
+router.get('/menugeneral/onebyid/:id', menuGeneral.getMenuGeneralById);
+
 router.get('/test', (req, res) => {
     res.send('Ruta de prueba funcionando');
 });
