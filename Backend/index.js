@@ -2,8 +2,7 @@ const express = require('express');
 const db = require('./app/config/db.config.js'); // Importa la configuración de la base de datos
 const config = require('./app/config/env.js'); // Archivo env.js
 const cors = require('cors');
-require('dotenv').config(); // Asegúrate de que esto esté al inicio
-const config = require('./app/config/.env'); // Archivo env.js
+require('dotenv').config({ path: './app/config/.env' }); // Ajusta la ruta según la ubicación de tu archivo .env
 const Stripe = require('stripe');
 
 const app = express();
