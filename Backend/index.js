@@ -2,7 +2,7 @@ const express = require('express');
 const db = require('./app/config/db.config.js'); // Importa la configuración de la base de datos
 const config = require('./app/config/env.js'); // Archivo env.js
 const cors = require('cors');
-const dotenv = require('dotenv');
+require('dotenv').config(); // Asegúrate de que esto esté al inicio
 const Stripe = require('stripe');
 
 const app = express();
@@ -25,7 +25,6 @@ app.use('/api', router);
 app.get('/', (req, res) => {
   res.send('Servidor funcionando');
 });
-
 
 // Ruta para manejar el pago con Stripe
 app.post('/create-payment-intent', async (req, res) => {
