@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
 //import CrudComponent from './Components/CrudComponent';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import CheckoutForm from './CheckoutForm'; // Importa tu formulario de pago
+
+// Cargar la clave pública de Stripe
+const stripePromise = loadStripe('pk_test_51Q9HPsB93apspbx9JgkhovEQGqqD1I6OgQQvticZ2PXSl4SnDv3wag9kAIvTo2r9xIhBI2aNNT5902GHhyeSkQmu00jmBMWQSE');
 
 const App = () => {
   const [username, setUsername] = useState('');
@@ -12,7 +18,7 @@ const App = () => {
     e.preventDefault();
     setError('');
 
-    const response = await fetch('http://localhost:4000/api/login', {
+    const response = await fetch('https://federico-fazbear.onrender.com/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -40,7 +46,7 @@ const App = () => {
   const accessProtectedRoute = async () => {
     const token = localStorage.getItem('token');
 
-    const response = await fetch('http://localhost:4000/api/protected', {
+    const response = await fetch('https://federico-fazbear.onrender.com/api/protected', {
       method: 'GET',
       headers: {
         Authorization: token,
@@ -94,6 +100,11 @@ const App = () => {
           <button className="btn btn-info ml-3" onClick={accessProtectedRoute}>
             Acceder a ruta protegida
           </button>
+
+          {/* Componente de pago de Stripe */}
+          <Elements stripe={stripePromise}>
+            <CheckoutForm />
+          </Elements>
         </div>
       )}
     </div>

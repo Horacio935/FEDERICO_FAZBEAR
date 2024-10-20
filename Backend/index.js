@@ -2,7 +2,8 @@ const express = require('express');
 const db = require('./app/config/db.config.js'); // Importa la configuración de la base de datos
 const config = require('./app/config/env.js'); // Archivo env.js
 const cors = require('cors');
-
+const dotenv = require('dotenv');
+const Stripe = require('stripe');
 
 const app = express();
 const PORT = process.env.PORT || 4000; // Puerto para Express
@@ -10,6 +11,9 @@ const PORT = process.env.PORT || 4000; // Puerto para Express
 // Middleware para parsear JSON
 app.use(cors());
 app.use(express.json());
+
+// Inicializa Stripe con la clave secreta
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Importar las rutas
 const router = require('./app/routers/router.js'); // Asegúrate de que la ruta sea correcta
@@ -21,6 +25,24 @@ app.use('/api', router);
 app.get('/', (req, res) => {
   res.send('Servidor funcionando');
 });
+
+
+// Ruta para manejar el pago con Stripe
+app.post('/create-payment-intent', async (req, res) => {
+  const { amount } = req.body; // Obtener la cantidad del cuerpo de la solicitud
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency: 'usd',
+      // Puedes agregar más parámetros como "payment_method_types"
+    });
+    res.send({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
+
 
 // Inicializa la conexión a la base de datos usando Sequelize
 const init = async () => {

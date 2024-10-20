@@ -11,3 +11,5 @@ module.exports = {
     idle: 10000
   }
 };
+
+STRIPE_SECRET_KEY=sk_test_51Q9HPsB93apspbx9AA2EX09UQmgIOAihaA7IGZ4I4EyZh9ya4UqouiaiYTJLtpBLmFq0XdSed99PW8dbIdPwRChd00OQqPtAZ1
