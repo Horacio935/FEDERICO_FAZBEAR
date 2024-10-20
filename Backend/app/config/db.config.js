@@ -29,6 +29,5 @@ db.Factura = require('../models/factura.model.js')(sequelize, Sequelize);
 db.DetalleFactura = require('../models/detallefactura.model.js')(sequelize, Sequelize);
 db.MenuGeneral = require('../models/menugeneral.model.js')(sequelize, Sequelize);
 db.Mesa = require('../models/mesa.model.js')(sequelize, Sequelize);
-db.Usuario = require('../models/usuario.model.js')(sequelize, Sequelize);
 
 module.exports = db;

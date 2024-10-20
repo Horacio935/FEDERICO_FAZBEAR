@@ -42,13 +42,6 @@ router.post('/register', async (req, res) => {
     }
 });
 
-/*catch (error) {
-        res.status(500).json({
-            message: "Failed to create Empleado!",
-            error: error.message
-        });
-    }*/
-
 // Ruta de inicio de sesión
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
@@ -132,14 +125,6 @@ const mesa = require('../controllers/controller.mesa.js');
 
 router.get('/mesa/all', mesa.retrieveAllMesas);
 router.get('/mesa/onebyid/:id', mesa.getMesaById);
-
-const usuario = require('../controllers/controller.usuario.js');
-
-router.post('/usuario/create', usuario.create);
-router.get('/usuario/all', usuario.retrieveAllUsuarios);
-router.get('/usuario/onebyid/:id', usuario.getUsuarioById);
-router.put('/usuario/update/:id', usuario.updateById);
-router.delete('/usuario/delete/:id', usuario.deleteById);
 
 router.get('/test', (req, res) => {
     res.send('Ruta de prueba funcionando');
