@@ -76,3 +76,42 @@ exports.realizarReserva = async (req, res) => {
         res.status(500).json({ message: 'Error al realizar la reserva', error });
     }
 };
+
+
+exports.retrieveReservasByCliente = async (req, res) => {
+    try {
+        const { idCliente } = req.params;  // Supone que pasas el idCliente como parámetro en la URL
+
+        // Verifica si el cliente existe
+       /* const cliente = await Cliente.findByPk(idCliente);
+        if (!cliente) {
+            return res.status(404).json({
+                message: `Cliente con id ${idCliente} no encontrado.`
+            });
+        }*/
+
+        // Encuentra todas las reservas del cliente
+        const reservas = await db.Factura.findAll({
+            where: { idCliente: idCliente },
+            attributes: ['noReserva', 'codigoMesa', 'fechaReserva', 'precio'] // Selecciona solo los campos relevantes de la factura
+        });
+
+        if (reservas.length === 0) {
+            return res.status(404).json({
+                message: `No se encontraron reservas para el cliente con id ${idCliente}.`
+            });
+        }
+
+        res.status(200).json({
+            message: `Reservass para el cliente con id ${idCliente} obtenidas exitosamente.`,
+            reservas: reservas  // Lista de reservas sin detalles
+        });
+
+    } catch (error) {
+        console.error("Error al obtener las reservas:", error);
+        res.status(500).json({
+            message: "Error al obtener las reservas",
+            error: error.message
+        });
+    }
+};

@@ -14,11 +14,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
       },
       hora_inicial: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DATE,
         allowNull: false
       },
       hora_final: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DATE,
         allowNull: false
       },
       cantidad_personas: {

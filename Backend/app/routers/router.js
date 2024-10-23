@@ -130,6 +130,11 @@ router.get('/test', (req, res) => {
     res.send('Ruta de prueba funcionando');
 });
 
+const DetalleReserva = require('../controllers/controller.reserva.js');
+
+// Ruta para realizar la compra
+router.post('/reserva/compras', DetalleReserva.realizarReserva);
+router.get('/clientesReserva/:idCliente/reserva', DetalleReserva.retrieveReservasByCliente);
 
 module.exports = router;
 
