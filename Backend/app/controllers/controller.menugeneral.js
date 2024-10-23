@@ -2,6 +2,10 @@ const db = require('../config/db.config.js');
 const MenuGeneral = db.MenuGeneral;
 const moment = require('moment');
 
+const getBase64Image = (imageBuffer) => {
+    return `data:image/jpeg;base64,${imageBuffer.toString('base64')}`; // Cambia 'jpeg' según el tipo de imagen
+};
+
 exports.create = async (req, res) => {
     try {
         const { idAlimento, idTipoMenu, nombre, descripcion, precio, imagen, fechaCreacion, fechaActualizacion } = req.body;
@@ -39,9 +43,18 @@ exports.create = async (req, res) => {
 exports.retrieveAllMenuGenerals = async (req, res) => {
     try {
         const menuGeneralInfos = await MenuGeneral.findAll();
+
+        // Convertir el BLOB de la imagen a Base64
+        const menuGeneralsWithImages = menuGeneralInfos.map(item => {
+            return {
+                ...item.dataValues,
+                imagen: getBase64Image(item.imagen) // Asumiendo que item.imagen es un BLOB
+            };
+        });
+
         res.status(200).json({
             message: "Successfully retrieved all MenuGenerals' Infos!",
-            menuGenerals: menuGeneralInfos
+            menuGenerals: menuGeneralsWithImages
         });
     } catch (error) {
         res.status(500).json({
@@ -63,9 +76,15 @@ exports.getMenuGeneralById = async (req, res) => {
             });
         }
 
+        // Convertir la imagen a Base64 si es necesario
+        const menuGeneralWithImage = {
+            ...menuGeneral.dataValues,
+            imagen: getBase64Image(menuGeneral.imagen) // Asumiendo que menuGeneral.imagen es un BLOB
+        };
+
         res.status(200).json({
             message: "Successfully retrieved MenuGeneral with id = " + menuGeneralId,
-            menuGeneral: menuGeneral
+            menuGeneral: menuGeneralWithImage
         });
     } catch (error) {
         res.status(500).json({
