@@ -17,13 +17,13 @@ async function getNextReservaNumber() {
 
 
 exports.realizarReserva = async (req, res) => {
-    const t = await db.sequelize.transaction(); // Inicia una transacción para asegurar que todo se inserte correctamente o se haga rollback
+    const t = await db.sequelize.transaction(); // Inicia una transacción para asegurarse de que todo se inserte correctamente o se haga rollback
 
     try {
-        const { codigoMesa, fechaReserva, horaInicial, horaFinal, cantidadPersonas, precio, idCliente, correo, detalles } = req.body;
+        const { codigoMesaReserva, idCliente, correo, cantidadPersonas, precio, productos, horaInicial, horaFinal } = req.body;
 
-        // Verificar que todos los campos obligatorios estén presentes
-        if (!codigoMesa || !fechaReserva || !horaInicial || !horaFinal || !cantidadPersonas || !precio || !idCliente || !correo || !detalles || detalles.length === 0) {
+        // Verificar que todos los campos obligatorios están presentes
+        if (!codigoMesaReserva || !idCliente || !correo || !cantidadPersonas || !precio || productos.length === 0 || !horaInicial || !horaFinal) {
             return res.status(400).json({ message: 'Datos incompletos en la solicitud' });
         }
 
@@ -33,35 +33,35 @@ exports.realizarReserva = async (req, res) => {
         // Crear la reserva
         const nuevaReserva = await Reserva.create({
             no_reserva: noReserva,
-            codigo_mesa: codigoMesa,
-            fecha_reserva: new Date(fechaReserva),
+            codigo_mesa: codigoMesaReserva,
+            fecha_reserva: new Date(),
             hora_inicial: horaInicial,
             hora_final: horaFinal,
             cantidad_personas: cantidadPersonas,
-            precio,
+            precio: precio,
             id_cliente: idCliente,
-            correo
+            correo: correo
         }, { transaction: t });
 
-        // Contador autoincrementable para los detalles de la reserva
+        // Contador autoincrementable para los detalles
         let idDetalleIncremental = 1;
 
         // Crear los detalles de la reserva
-        for (let i = 0; i < detalles.length; i++) {
-            const detalle = detalles[i];
+        for (let i = 0; i < productos.length; i++) {
+            const producto = productos[i];
 
-            // Validar que los datos del detalle estén completos
-            if (!detalle.costo || !detalle.fechaCompra || !detalle.lugarCompra) {
-                throw new Error('Datos incompletos en los detalles de la reserva');
+            // Validar que los datos del producto estén completos
+            if (!producto.costo || !producto.lugarCompra || !producto.codigoMesaDetalle) {
+                throw new Error('Datos incompletos en los productos');
             }
 
             await DetalleReserva.create({
-                id_detalle_reserva: idDetalleIncremental++,  // Incrementa el valor del id_detalle_reserva
-                codigo_reserva: nuevaReserva.no_reserva,
-                codigo_mesa: codigoMesa,  // Puede usar el mismo `codigo_mesa` de la reserva
-                costo: detalle.costo,
-                fecha_compra: new Date(detalle.fechaCompra),
-                lugar_compra: detalle.lugarCompra
+                id_detalle_reserva: idDetalleIncremental++,  // Incrementa el valor de idDetalle
+                no_reserva: nuevaReserva.no_reserva,  // código de reserva de la tabla DETALLE_RESERVA
+                codigo_mesa: producto.codigoMesaDetalle,  // código de mesa de la tabla DETALLE_RESERVA
+                costo: producto.costo,
+                fecha_compra: new Date(),
+                lugar_compra: producto.lugarCompra
             }, { transaction: t });
         }
 
