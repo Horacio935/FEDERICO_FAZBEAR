@@ -134,3 +134,88 @@ exports.retrieveReservasByCliente = async (req, res) => {
         });
     }
 };
+
+exports.verificarmesa = async (req, res) =>{
+    /*try{
+        const {FechaReserva, HoraInicial, HoraFinal} = req.params;
+    }catch (error) {
+    }*/
+    try {
+        // Desestructuramos los valores dinámicos del cuerpo de la solicitud (req.body)
+        const { fechaConsulta, horaInicio, horaFin } = req.body;
+    
+        // Validación básica para asegurarse de que los parámetros se proporcionan
+        if (!fechaConsulta || !horaInicio || !horaFin) {
+          return res.status(400).json({ message: "Parámetros incompletos" });
+        }
+    
+        // Ejecutar la consulta SQL manualmente usando sequelize.query
+        const result = await db.sequelize.query(
+            `SELECT res.no_reserva, det.codigo_mesa
+            FROM reserva res
+            INNER JOIN detalle_reserva det ON res.no_reserva = det.no_reserva
+            WHERE (
+            (:horaInicio BETWEEN TO_CHAR(res.hora_inicial, 'HH24:MI') AND TO_CHAR(res.hora_final, 'HH24:MI'))
+            OR (:horaFin BETWEEN TO_CHAR(res.hora_inicial, 'HH24:MI') AND TO_CHAR(res.hora_final, 'HH24:MI'))
+            OR (TO_CHAR(res.hora_inicial, 'HH24:MI') >= :horaInicio AND TO_CHAR(res.hora_final, 'HH24:MI') <= :horaFin))
+            AND TRUNC(res.fecha_reserva) = TO_DATE(:fechaConsulta, 'DD/MM/YYYY')`,
+          {
+            type: db.Sequelize.QueryTypes.SELECT,
+            replacements: {
+              fechaConsulta,
+              horaInicio,
+              horaFin
+            }
+          }
+        );
+    
+        // Retornar los resultados
+        res.status(200).json({ result });
+      } catch (error) {
+        console.error('Error al ejecutar la consulta:', error);
+        res.status(500).json({ message: 'Error en la consulta', error });
+      }
+};
+
+exports.getDetallesByReserva = (req, res) => {
+    const { noReserva } = req.params;
+
+    // Validar que idCliente sea un número
+    if (isNaN(noReserva)) {
+        return res.status(400).json({
+            message: "El número de reserva debe ser un valor numérico válido."
+        });
+    }
+
+    // Convertir el valor de idCliente a número
+    const noReservaNumber = parseInt(id_cliente, 10);
+
+    // Buscar registros en la tabla 'detalle_factura' con el número y serie de la factura
+    db.DetalleReserva.findAll({
+        where: {
+            id_cliente: noReservaNumber,
+            noReserva: noReserva
+        }
+    })
+    .then(detalleReservas => {
+        if (detalleReservas.length === 0) {
+            return res.status(404).json({
+                message: `No se encontraron detalles para la factura con número ${id_cliente} y serie ${noReserva}.`
+            });
+        }
+
+        // Retornar los detalles encontrados
+        res.status(200).json({
+            message: `Detalles de la reserva con número ${id_cliente} y serie ${noReserva} obtenidos exitosamente.`,
+            detalles: detalleReservas
+        });
+    })
+    .catch(error => {
+        // Manejar errores y mostrar un mensaje genérico
+        console.log(error);
+        res.status(500).json({
+            message: "Ocurrió un error al obtener los detalles de la reserva.",
+            error: error.message
+        });
+    });
+};
