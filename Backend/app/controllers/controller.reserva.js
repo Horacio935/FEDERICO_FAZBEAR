@@ -20,7 +20,7 @@ exports.realizarReserva = async (req, res) => {
     const t = await db.sequelize.transaction();
 
     try {
-        const { codigoMesaReserva, idCliente, correo, cantidadPersonas, precio, productos, horaInicial, horaFinal } = req.body;
+        const { codigoMesaReserva, idCliente, correo, cantidadPersonas, precio, productos, horaInicial, horaFinal, fechaReserva } = req.body;
 
         // Verificar que todos los campos obligatorios están presentes
         if (!codigoMesaReserva || !idCliente || !correo || !cantidadPersonas || !precio || productos.length === 0 || !fechaReserva || !horaInicial || !horaFinal) {
@@ -30,14 +30,19 @@ exports.realizarReserva = async (req, res) => {
         // Convertir los campos de hora inicial y final a formato TIMESTAMP WITH TIME ZONE
         const parsedHoraInicial = new Date(horaInicial); // Asegúrate que el cliente envíe en formato ISO 8601
         const parsedHoraFinal = new Date(horaFinal);
-        const parsedFechaReserva = new Date(fechaReserva); // Parsear la fecha de reserva
 
         // Verificar si las conversiones fueron correctas
-        if (isNaN(parsedHoraInicial) || isNaN(parsedHoraFinal) || isNaN(parsedFechaReserva)) {
-            return res.status(400).json({ message: 'Formato de fecha y hora inválido' });
+        if (isNaN(parsedHoraInicial) || isNaN(parsedHoraFinal)) {
+            return res.status(400).json({ message: 'Formato de hora inválido' });
         }
 
-        // Establecer la hora de la fecha de reserva a 00:00:00
+        // Convertir fechaReserva a formato de solo fecha
+        const parsedFechaReserva = new Date(fechaReserva); // Parsear la fecha de reserva
+        if (isNaN(parsedFechaReserva)) {
+            return res.status(400).json({ message: 'Formato de fecha inválido' });
+        }
+
+        // Establecer la hora de la fecha de reserva a 00:00:00 (aunque solo se usará la fecha)
         parsedFechaReserva.setHours(0, 0, 0, 0);
 
         // Obtener el siguiente número de reserva
@@ -47,7 +52,7 @@ exports.realizarReserva = async (req, res) => {
         const nuevaReserva = await Reserva.create({
             no_reserva: noReserva,
             codigo_mesa: codigoMesaReserva,
-            fecha_reserva: parsedFechaReserva,
+            fecha_reserva: parsedFechaReserva.toISOString().split('T')[0],  // Insertar solo la fecha
             hora_inicial: parsedHoraInicial,  // Guardar como TIMESTAMP WITH TIME ZONE
             hora_final: parsedHoraFinal,      // Guardar como TIMESTAMP WITH TIME ZONE
             cantidad_personas: cantidadPersonas,
@@ -85,8 +90,8 @@ exports.realizarReserva = async (req, res) => {
     } catch (error) {
         // Hacer rollback en caso de error
         await t.rollback();
-        console.error('Error en la reserva:', error.message || error);
-        res.status(500).json({ message: 'Error al realizar la reserva', error: error.message || error });
+        console.error('Error en la reserva:', error.message || error); // Registrar el mensaje de error
+        res.status(500).json({ message: 'Error al realizar la reserva', error: error.message || error }); // Enviar el mensaje de error al cliente
     }
 };
 
@@ -107,7 +112,7 @@ exports.retrieveReservasByCliente = async (req, res) => {
         // Encuentra todas las reservas del cliente
         const reservas = await db.Reserva.findAll({
             where: { id_cliente: idCliente },
-            attributes: ['noReserva', 'codigoMesa', 'fechaReserva', 'precio'] // Selecciona solo los campos relevantes de la factura
+            attributes: ['no_reserva', 'codigo_mesa', 'fecha_reserva', 'precio'] // Selecciona solo los campos relevantes de la factura
         });
 
         if (reservas.length === 0) {
