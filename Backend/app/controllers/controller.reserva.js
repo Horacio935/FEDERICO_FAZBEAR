@@ -180,33 +180,32 @@ exports.verificarmesa = async (req, res) =>{
 exports.getDetallesByReserva = (req, res) => {
     const { noReserva } = req.params;
 
-    // Validar que idCliente sea un número
+    // Validar que noReserva sea un número
     if (isNaN(noReserva)) {
         return res.status(400).json({
             message: "El número de reserva debe ser un valor numérico válido."
         });
     }
 
-    // Convertir el valor de idCliente a número
-    const noReservaNumber = parseInt(id_cliente, 10);
+    // Convertir el valor de noReserva a número
+    const noReservaNumber = parseInt(noReserva, 10);
 
-    // Buscar registros en la tabla 'detalle_factura' con el número y serie de la factura
+    // Buscar registros en la tabla 'detalle_reserva' con el número de reserva
     db.DetalleReserva.findAll({
         where: {
-            id_cliente: noReservaNumber,
-            noReserva: noReserva
+            no_reserva: noReservaNumber
         }
     })
     .then(detalleReservas => {
         if (detalleReservas.length === 0) {
             return res.status(404).json({
-                message: `No se encontraron detalles para la factura con número ${id_cliente} y serie ${noReserva}.`
+                message: `No se encontraron detalles para la reserva con número ${noReservaNumber}.`
             });
         }
 
         // Retornar los detalles encontrados
         res.status(200).json({
-            message: `Detalles de la reserva con número ${id_cliente} y serie ${noReserva} obtenidos exitosamente.`,
+            message: `Detalles de la reserva con número ${noReservaNumber} obtenidos exitosamente.`,
             detalles: detalleReservas
         });
     })
