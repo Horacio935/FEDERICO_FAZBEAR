@@ -20,10 +20,10 @@ exports.realizarReserva = async (req, res) => {
     const t = await db.sequelize.transaction();
 
     try {
-        const { codigoMesaReserva, idCliente, correo, cantidadPersonas, precio, productos, horaInicial, horaFinal, fechaReserva } = req.body;
+        const { codigoMesaReserva, id_cliente, correo, cantidadPersonas, precio, productos, horaInicial, horaFinal, fechaReserva } = req.body;
 
         // Verificar que todos los campos obligatorios están presentes
-        if (!codigoMesaReserva || !idCliente || !correo || !cantidadPersonas || !precio || productos.length === 0 || !fechaReserva || !horaInicial || !horaFinal) {
+        if (!codigoMesaReserva || !id_cliente || !correo || !cantidadPersonas || !precio || productos.length === 0 || !fechaReserva || !horaInicial || !horaFinal) {
             return res.status(400).json({ message: 'Datos incompletos en la solicitud' });
         }
 
@@ -57,7 +57,7 @@ exports.realizarReserva = async (req, res) => {
             hora_final: parsedHoraFinal,      // Guardar como TIMESTAMP WITH TIME ZONE
             cantidad_personas: cantidadPersonas,
             precio: precio,
-            idCliente: idCliente,
+            id_cliente: id_cliente,
             correo: correo
         }, { transaction: t });
 
