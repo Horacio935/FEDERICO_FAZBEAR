@@ -91,7 +91,7 @@ exports.retrieveReservasByCliente = async (req, res) => {
         }*/
 
         // Encuentra todas las reservas del cliente
-        const reservas = await db.Factura.findAll({
+        const reservas = await db.Reserva.findAll({
             where: { idCliente: idCliente },
             attributes: ['noReserva', 'codigoMesa', 'fechaReserva', 'precio'] // Selecciona solo los campos relevantes de la factura
         });

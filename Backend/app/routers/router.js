@@ -115,6 +115,7 @@ const DetalleFactura = require('../controllers/controller.factura.js');
 // Ruta para realizar la compra
 router.post('/carrito/compras', DetalleFactura.realizarCompra);
 router.get('/clientes/:idCliente/facturas', DetalleFactura.retrieveFacturasByCliente);
+router.get('/detalle_factura/:noFactura/:serieFactura', DetalleFactura.getDetallesByFactura);
 
 const menuGeneral = require('../controllers/controller.menugeneral.js');
 

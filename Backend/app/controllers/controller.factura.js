@@ -1,3 +1,4 @@
+
 const db = require('../config/db.config.js');
 const Factura = db.Factura;  // Modelo Factura
 const DetalleFactura = db.DetalleFactura;  // Modelo DetalleFactura
@@ -118,4 +119,52 @@ exports.retrieveFacturasByCliente = async (req, res) => {
             error: error.message
         });
     }
+};
+
+
+
+
+
+// Controlador para obtener los detalles de una factura
+exports.getDetallesByFactura = (req, res) => {
+    const { noFactura, serieFactura } = req.params;
+
+    // Validar que noFactura sea un número
+    if (isNaN(noFactura)) {
+        return res.status(400).json({
+            message: "El número de factura debe ser un valor numérico válido."
+        });
+    }
+
+    // Convertir el valor de noFactura a número
+    const noFacturaNumber = parseInt(noFactura, 10);
+
+    // Buscar registros en la tabla 'detalle_factura' con el número y serie de la factura
+    db.DetalleFactura.findAll({
+        where: {
+            noFactura: noFacturaNumber,
+            serieFactura: serieFactura
+        }
+    })
+    .then(detalleFacturas => {
+        if (detalleFacturas.length === 0) {
+            return res.status(404).json({
+                message: `No se encontraron detalles para la factura con número ${noFactura} y serie ${serieFactura}.`
+            });
+        }
+
+        // Retornar los detalles encontrados
+        res.status(200).json({
+            message: `Detalles de la factura con número ${noFactura} y serie ${serieFactura} obtenidos exitosamente.`,
+            detalles: detalleFacturas
+        });
+    })
+    .catch(error => {
+        // Manejar errores y mostrar un mensaje genérico
+        console.log(error);
+        res.status(500).json({
+            message: "Ocurrió un error al obtener los detalles de la factura.",
+            error: error.message
+        });
+    });
 };
