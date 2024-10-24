@@ -85,8 +85,8 @@ exports.realizarReserva = async (req, res) => {
     } catch (error) {
         // Hacer rollback en caso de error
         await t.rollback();
-        console.error('Error en la reserva:', error);
-        res.status(500).json({ message: 'Error al realizar la reserva', error });
+        console.error('Error en la reserva:', error.message || error);
+        res.status(500).json({ message: 'Error al realizar la reserva', error: error.message || error });
     }
 };
 
