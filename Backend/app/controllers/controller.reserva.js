@@ -20,21 +20,25 @@ exports.realizarReserva = async (req, res) => {
     const t = await db.sequelize.transaction();
 
     try {
-        const { codigoMesaReserva, id_cliente, correo, cantidadPersonas, precio, productos, horaInicial, horaFinal } = req.body;
+        const { codigoMesaReserva, idCliente, correo, cantidadPersonas, precio, productos, horaInicial, horaFinal } = req.body;
 
         // Verificar que todos los campos obligatorios están presentes
-        if (!codigoMesaReserva || !id_cliente || !correo || !cantidadPersonas || !precio || productos.length === 0 || !horaInicial || !horaFinal) {
+        if (!codigoMesaReserva || !idCliente || !correo || !cantidadPersonas || !precio || productos.length === 0 || !fechaReserva || !horaInicial || !horaFinal) {
             return res.status(400).json({ message: 'Datos incompletos en la solicitud' });
         }
 
         // Convertir los campos de hora inicial y final a formato TIMESTAMP WITH TIME ZONE
-        const parsedHoraInicial = new Date(horaInicial);  // Asegúrate que el cliente envíe en formato ISO 8601
+        const parsedHoraInicial = new Date(horaInicial); // Asegúrate que el cliente envíe en formato ISO 8601
         const parsedHoraFinal = new Date(horaFinal);
+        const parsedFechaReserva = new Date(fechaReserva); // Parsear la fecha de reserva
 
-        // Verificar si la conversión fue correcta
-        if (isNaN(parsedHoraInicial) || isNaN(parsedHoraFinal)) {
+        // Verificar si las conversiones fueron correctas
+        if (isNaN(parsedHoraInicial) || isNaN(parsedHoraFinal) || isNaN(parsedFechaReserva)) {
             return res.status(400).json({ message: 'Formato de fecha y hora inválido' });
         }
+
+        // Establecer la hora de la fecha de reserva a 00:00:00
+        parsedFechaReserva.setHours(0, 0, 0, 0);
 
         // Obtener el siguiente número de reserva
         const noReserva = await getNextReservaNumber();
@@ -43,12 +47,12 @@ exports.realizarReserva = async (req, res) => {
         const nuevaReserva = await Reserva.create({
             no_reserva: noReserva,
             codigo_mesa: codigoMesaReserva,
-            fecha_reserva: new Date(),
+            fecha_reserva: parsedFechaReserva,
             hora_inicial: parsedHoraInicial,  // Guardar como TIMESTAMP WITH TIME ZONE
             hora_final: parsedHoraFinal,      // Guardar como TIMESTAMP WITH TIME ZONE
             cantidad_personas: cantidadPersonas,
             precio: precio,
-            id_cliente: id_cliente,
+            idCliente: idCliente,
             correo: correo
         }, { transaction: t });
 
@@ -90,30 +94,30 @@ exports.realizarReserva = async (req, res) => {
 
 exports.retrieveReservasByCliente = async (req, res) => {
     try {
-        const { id_cliente } = req.params;  // Supone que pasas el id_cliente como parámetro en la URL
+        const { idCliente } = req.params;  // Supone que pasas el idCliente como parámetro en la URL
 
         // Verifica si el cliente existe
-       /* const cliente = await Cliente.findByPk(id_cliente);
+       /* const cliente = await Cliente.findByPk(idCliente);
         if (!cliente) {
             return res.status(404).json({
-                message: `Cliente con id ${id_cliente} no encontrado.`
+                message: `Cliente con id ${idCliente} no encontrado.`
             });
         }*/
 
         // Encuentra todas las reservas del cliente
         const reservas = await db.Reserva.findAll({
-            where: { id_cliente: id_cliente },
+            where: { id_cliente: idCliente },
             attributes: ['noReserva', 'codigoMesa', 'fechaReserva', 'precio'] // Selecciona solo los campos relevantes de la factura
         });
 
         if (reservas.length === 0) {
             return res.status(404).json({
-                message: `No se encontraron reservas para el cliente con id ${id_cliente}.`
+                message: `No se encontraron reservas para el cliente con id ${idCliente}.`
             });
         }
 
         res.status(200).json({
-            message: `Reservass para el cliente con id ${id_cliente} obtenidas exitosamente.`,
+            message: `Reservass para el cliente con id ${idCliente} obtenidas exitosamente.`,
             reservas: reservas  // Lista de reservas sin detalles
         });
 
