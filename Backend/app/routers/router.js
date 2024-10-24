@@ -137,7 +137,7 @@ const DetalleReserva = require('../controllers/controller.reserva.js');
 router.post('/reserva/compras', DetalleReserva.realizarReserva);
 router.get('/clientesReserva/:idCliente/reserva', DetalleReserva.retrieveReservasByCliente);
 router.get('/detalle_reserva/:noReserva', DetalleReserva.getDetallesByRserva);
-router.post('/mesasdisponibles/verificar', DetalleReserva.realizarReserva);
+router.post('/mesasdisponibles/verificar', DetalleReserva.verificarmesa);
 
 module.exports = router;
 
