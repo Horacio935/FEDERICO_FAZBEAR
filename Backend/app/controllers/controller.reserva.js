@@ -17,7 +17,7 @@ async function getNextReservaNumber() {
 
 
 exports.realizarReserva = async (req, res) => {
-    const t = await db.sequelize.transaction(); // Inicia una transacción para asegurarse de que todo se inserte correctamente o se haga rollback
+    const t = await db.sequelize.transaction();
 
     try {
         const { codigoMesaReserva, idCliente, correo, cantidadPersonas, precio, productos, horaInicial, horaFinal } = req.body;
@@ -25,6 +25,15 @@ exports.realizarReserva = async (req, res) => {
         // Verificar que todos los campos obligatorios están presentes
         if (!codigoMesaReserva || !idCliente || !correo || !cantidadPersonas || !precio || productos.length === 0 || !horaInicial || !horaFinal) {
             return res.status(400).json({ message: 'Datos incompletos en la solicitud' });
+        }
+
+        // Convertir los campos de hora inicial y final a formato TIMESTAMP WITH TIME ZONE
+        const parsedHoraInicial = new Date(horaInicial);  // Asegúrate que el cliente envíe en formato ISO 8601
+        const parsedHoraFinal = new Date(horaFinal);
+
+        // Verificar si la conversión fue correcta
+        if (isNaN(parsedHoraInicial) || isNaN(parsedHoraFinal)) {
+            return res.status(400).json({ message: 'Formato de fecha y hora inválido' });
         }
 
         // Obtener el siguiente número de reserva
@@ -35,8 +44,8 @@ exports.realizarReserva = async (req, res) => {
             no_reserva: noReserva,
             codigo_mesa: codigoMesaReserva,
             fecha_reserva: new Date(),
-            hora_inicial: horaInicial,
-            hora_final: horaFinal,
+            hora_inicial: parsedHoraInicial,  // Guardar como TIMESTAMP WITH TIME ZONE
+            hora_final: parsedHoraFinal,      // Guardar como TIMESTAMP WITH TIME ZONE
             cantidad_personas: cantidadPersonas,
             precio: precio,
             id_cliente: idCliente,
@@ -56,9 +65,9 @@ exports.realizarReserva = async (req, res) => {
             }
 
             await DetalleReserva.create({
-                id_detalle_reserva: idDetalleIncremental++,  // Incrementa el valor de idDetalle
-                no_reserva: nuevaReserva.no_reserva,  // código de reserva de la tabla DETALLE_RESERVA
-                codigo_mesa: producto.codigoMesaDetalle,  // código de mesa de la tabla DETALLE_RESERVA
+                id_detalle_reserva: idDetalleIncremental++,  
+                no_reserva: nuevaReserva.no_reserva,  
+                codigo_mesa: producto.codigoMesaDetalle,  
                 costo: producto.costo,
                 fecha_compra: new Date(),
                 lugar_compra: producto.lugarCompra
@@ -76,6 +85,7 @@ exports.realizarReserva = async (req, res) => {
         res.status(500).json({ message: 'Error al realizar la reserva', error });
     }
 };
+
 
 
 exports.retrieveReservasByCliente = async (req, res) => {
