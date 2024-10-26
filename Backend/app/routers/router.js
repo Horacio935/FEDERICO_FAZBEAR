@@ -126,7 +126,7 @@ const mesa = require('../controllers/controller.mesa.js');
 
 router.get('/mesa/all', mesa.retrieveAllMesas);
 router.get('/mesa/onebyid/:id', mesa.getMesaById);
-router.get('/mesa/sucursal/:idSucursal', mesa.getMesasBySucursal);
+router.get('/mesa/sucursal/:sucursalId', mesa.getMesasBySucursal);
 
 router.get('/test', (req, res) => {
     res.send('Ruta de prueba funcionando');
