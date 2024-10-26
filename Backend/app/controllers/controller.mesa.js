@@ -41,3 +41,28 @@ exports.getMesaById = async (req, res) => {
         });
     }
 }
+
+exports.getMesasBySucursal = async (req, res) => {
+    try {
+        const sucursalId = req.params.sucursalId;
+        const mesas = await Mesa.findAll({ where: { sucursalId: sucursalId } });
+
+        if (!mesas.length) {
+            return res.status(404).json({
+                message: `No se encontraron mesas para la sucursal con id = ${sucursalId}`,
+                error: "404"
+            });
+        }
+
+        res.status(200).json({
+            message: `Mesas obtenidas correctamente para la sucursal con id = ${sucursalId}`,
+            mesas: mesas
+        });
+    } catch (error) {
+        console.error('Error al obtener las mesas:', error);
+        res.status(500).json({
+            message: "Error al obtener las mesas!",
+            error: error.message
+        });
+    }
+};
