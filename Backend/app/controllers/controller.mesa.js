@@ -45,7 +45,9 @@ exports.getMesaById = async (req, res) => {
 exports.getMesasBySucursal = async (req, res) => {
     try {
         const sucursalId = req.params.sucursalId;
-        const mesas = await Mesa.findAll({ where: { sucursalId: sucursalId } });
+        
+        // Usa `Sucursal` para que coincida con el modelo
+        const mesas = await Mesa.findAll({ where: { Sucursal: sucursalId } });
 
         if (!mesas.length) {
             return res.status(404).json({
