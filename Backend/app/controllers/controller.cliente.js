@@ -158,3 +158,28 @@ exports.deleteById = async (req, res) => {
         });
     }
 }
+
+exports.getClienteByCorreo = async (req, res) => {
+    try {
+        const correoCliente = req.params.correo;
+        const cliente = await Cliente.findByPk(correoCliente); // Utiliza `findByPk` directamente con `correo`
+        
+        if (!cliente) {
+            return res.status(404).json({
+                message: "Cliente with correo = " + correoCliente + " not found!",
+                error: "404"
+            });
+        }
+
+        res.status(200).json({
+            message: "Successfully retrieved Cliente with correo = " + correoCliente,
+            cliente: cliente
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Error retrieving Cliente with correo = " + req.params.correo,
+            error: error.message
+        });
+    }
+}

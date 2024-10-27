@@ -13,10 +13,6 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING(30),
             field: 'NOMBRE'
         },
-        /*nombre2: {
-            type: Sequelize.STRING(30),
-            field: 'NOMBRE2'
-        },*/
         apellido: {
             type: Sequelize.STRING(30),
             field: 'APELLIDO'
