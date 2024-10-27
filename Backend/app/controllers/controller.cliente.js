@@ -162,7 +162,7 @@ exports.deleteById = async (req, res) => {
 exports.getClienteByCorreo = async (req, res) => {
     try {
         const correoCliente = req.params.correo;
-        const cliente = await Cliente.findByPk(correoCliente); // Utiliza `findByPk` directamente con `correo`
+        const cliente = await Cliente.findOne({ where: { correo: correoCliente } });
         
         if (!cliente) {
             return res.status(404).json({
