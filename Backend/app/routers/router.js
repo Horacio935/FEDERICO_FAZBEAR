@@ -8,7 +8,7 @@ const JWT_SECRET = 'mi_clave_secreta_super_segura';
 
 
 // Ruta de registro de usuario
-router.post('/register', async (req, res) => {
+/*router.post('/register', async (req, res) => {
     const { username, password, id_cliente, id_empleado, id_usuario } = req.body; // Añadimos los valores opcionales de cliente y empleado
 
     // Hashear la contraseña
@@ -40,7 +40,7 @@ router.post('/register', async (req, res) => {
             details: error.message 
         });
     }
-});
+});*/
 
 // Ruta de inicio de sesión
 router.post('/login', async (req, res) => {

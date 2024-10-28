@@ -4,6 +4,8 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.css'
+import Detalle from './Detalle';
+import Visualizar_facturas from './Visualizar_facturas';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
