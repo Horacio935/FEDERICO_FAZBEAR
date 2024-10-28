@@ -1,7 +1,7 @@
 const db = require('../config/db.config.js');
 const Cliente = db.Cliente;
 const Usuario = db.Usuario;
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const moment = require('moment');
 
 async function getNextClienteId() {
