@@ -97,30 +97,25 @@ exports.realizarReserva = async (req, res) => {
 
 
 
-exports.retrieveReservasByCorreo = async (req, res) => {
+exports.retrieveReservasByCliente = async (req, res) => {
     try {
-        const { correo } = req.params;  // Supone que pasas el correo como parámetro en la URL
+        const { correo } = req.params;  // Supone que pasas el idCliente como parámetro en la URL
 
-        // Encuentra todas las reservas del cliente usando el correo
+        // Encuentra todas las reservas del cliente
         const reservas = await db.Reserva.findAll({
-            include: [{
-                model: db.Usuario, // Asegúrate de tener una relación configurada entre Reserva y Usuario
-                where: { correo: correo },
-                attributes: [] // No necesitas traer atributos del modelo Usuario
-            }],
-            attributes: ['no_reserva', 'codigo_mesa', 'fecha_reserva', 'precio'],
-            where: { '$Usuario.correo$': correo } // Condición de búsqueda por correo
+            where: { correo: correo },
+            attributes: ['no_reserva', 'codigo_mesa', 'fecha_reserva', 'precio'] // Selecciona solo los campos relevantes de la factura
         });
 
         if (reservas.length === 0) {
             return res.status(404).json({
-                message: `No se encontraron reservas para el cliente con correo ${correo}.`
+                message: `No se encontraron reservas para el cliente con el correo ${correo}.`
             });
         }
 
         res.status(200).json({
-            message: `Reservas para el cliente con correo ${correo} obtenidas exitosamente.`,
-            reservas: reservas // Lista de reservas sin detalles
+            message: `Reservass para el cliente con el correo ${correo} obtenidas exitosamente.`,
+            reservas: reservas  // Lista de reservas sin detalles
         });
 
     } catch (error) {
@@ -131,7 +126,6 @@ exports.retrieveReservasByCorreo = async (req, res) => {
         });
     }
 };
-
 
 exports.verificarmesa = async (req, res) =>{
     /*try{

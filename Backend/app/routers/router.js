@@ -115,7 +115,7 @@ const DetalleFactura = require('../controllers/controller.factura.js');
 
 // Ruta para realizar la compra
 router.post('/carrito/compras', DetalleFactura.realizarCompra);
-router.get('/clientes/:correo/facturas', DetalleFactura.retrieveFacturasByCorreo);
+router.get('/clientes/:correo/facturas', DetalleFactura.retrieveFacturasByCliente);
 router.get('/detalle_factura/:noFactura/:serieFactura', DetalleFactura.getDetallesByFactura);
 
 const menuGeneral = require('../controllers/controller.menugeneral.js');
@@ -137,7 +137,7 @@ const DetalleReserva = require('../controllers/controller.reserva.js');
 
 // Ruta para realizar la compra
 router.post('/reserva/compras', DetalleReserva.realizarReserva);
-router.get('/clientesReserva/:correo/reserva', DetalleReserva.retrieveReservasByCorreo);
+router.get('/clientesReserva/:correo/reserva', DetalleReserva.retrieveReservasByCliente);
 router.get('/detalle_reserva/:noReserva', DetalleReserva.getDetallesByReserva);
 router.post('/mesasdisponibles/verificar', DetalleReserva.verificarmesa);
 
