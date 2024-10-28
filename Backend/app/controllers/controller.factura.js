@@ -83,33 +83,30 @@ async function getNextFacturaNumber() {
 };
 //module.exports = { realizarCompra };
 
-exports.retrieveFacturasByCliente = async (req, res) => {
+exports.retrieveFacturasByCorreo = async (req, res) => {
     try {
-        const { idCliente } = req.params;  // Supone que pasas el idCliente como parámetro en la URL
+        const { correo } = req.params;  // Supone que pasas el correo como parámetro en la URL
 
-        // Verifica si el cliente existe
-       /* const cliente = await Cliente.findByPk(idCliente);
-        if (!cliente) {
-            return res.status(404).json({
-                message: `Cliente con id ${idCliente} no encontrado.`
-            });
-        }*/
-
-        // Encuentra todas las facturas del cliente
+        // Encuentra todas las facturas del cliente usando el correo
         const facturas = await db.Factura.findAll({
-            where: { idCliente: idCliente },
-            attributes: ['noFactura', 'serieFactura', 'fechaFactura', 'total'] // Selecciona solo los campos relevantes de la factura
+            include: [{
+                model: db.Usuario, // Asegúrate de tener una relación configurada entre Factura y Usuario
+                where: { correo: correo },
+                attributes: [] // No necesitas traer atributos del modelo Usuario
+            }],
+            attributes: ['noFactura', 'serieFactura', 'fechaFactura', 'total'],
+            where: { '$Usuario.correo$': correo } // Condición de búsqueda por correo
         });
 
         if (facturas.length === 0) {
             return res.status(404).json({
-                message: `No se encontraron facturas para el cliente con id ${idCliente}.`
+                message: `No se encontraron facturas para el cliente con correo ${correo}.`
             });
         }
 
         res.status(200).json({
-            message: `Facturas para el cliente con id ${idCliente} obtenidas exitosamente.`,
-            facturas: facturas  // Lista de facturas sin detalles
+            message: `Facturas para el cliente con correo ${correo} obtenidas exitosamente.`,
+            facturas: facturas // Lista de facturas sin detalles
         });
 
     } catch (error) {
@@ -120,6 +117,7 @@ exports.retrieveFacturasByCliente = async (req, res) => {
         });
     }
 };
+
 
 
 
