@@ -226,7 +226,7 @@ exports.getClienteByCorreo = async (req, res) => {
 }
 
 exports.getIdClienteByCorreo = async (req, res) => {
-    const { correo } = req.query; // Asume que el correo se recibe como parámetro en la URL
+    const { correo } = req.params; // Asume que el correo se recibe como parámetro en la URL
 
     if (!correo) {
         return res.status(400).json({ message: 'Correo es requerido' });
