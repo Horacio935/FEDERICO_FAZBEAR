@@ -2,42 +2,40 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const Detalle = () => {
-    const [idCliente, setIdCliente] = useState('');
+    const [correo, setCorreo] = useState('');
     const [reservas, setReservas] = useState([]);
-    const [detallesReserva, setDetallesReserva] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [detallesReserva, setDetallesReserva] = useState(null); // Estado para detalles
 
     const fetchReservas = async () => {
-        if (!idCliente) return;
+        if (!correo) return;
 
         setLoading(true);
         setError('');
+        setReservas([]);
+        setDetallesReserva(null); // Limpiar detalles al cargar nuevas reservas
 
         try {
-            const response = await axios.get(`https://federico-fazbear.onrender.com/api/clientesReserva/${idCliente}/reserva`);
+            const url = `https://federico-fazbear.onrender.com/api/clientesReserva/${correo}/reserva`;
+            const response = await axios.get(url);
             setReservas(response.data.reservas);
         } catch (err) {
             setError('Error al obtener las reservas');
-            console.error(err);
+            console.error('Error de API:', err);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleReservaClick = async (noReserva) => {
-        setLoading(true);
-        setError('');
-
+    const fetchDetalleReserva = async (noReserva) => {
         try {
-            const response = await axios.get(`https://federico-fazbear.onrender.com/api/detalle_reserva/${noReserva}`);
-            console.log('Detalles de la reserva:', response.data); // Verificar respuesta
-            setDetallesReserva(response.data.detalles); // Obtener todos los detalles
+            const url = `https://federico-fazbear.onrender.com/api/detalle_reserva/${noReserva}`;
+            const response = await axios.get(url);
+            setDetallesReserva(response.data.detalles); // Guardar detalles como un array
         } catch (err) {
             setError('Error al obtener los detalles de la reserva');
-            console.error(err);
-        } finally {
-            setLoading(false);
+            console.error('Error de API:', err);
         }
     };
 
@@ -45,10 +43,10 @@ const Detalle = () => {
         <div>
             <h1>Reservas del Cliente</h1>
             <input
-                type="number"
-                value={idCliente}
-                onChange={(e) => setIdCliente(e.target.value)}
-                placeholder="Ingrese ID del Cliente"
+                type="email"
+                value={correo}
+                onChange={(e) => setCorreo(e.target.value)}
+                placeholder="Ingrese correo del Cliente"
             />
             <button onClick={fetchReservas}>Cargar Reservas</button>
 
@@ -57,23 +55,22 @@ const Detalle = () => {
 
             <ul>
                 {reservas.map((reserva) => (
-                    <li key={reserva.no_reserva} onClick={() => handleReservaClick(reserva.no_reserva)}>
+                    <li key={reserva.no_reserva} onClick={() => fetchDetalleReserva(reserva.no_reserva)}>
                         Reserva No: {reserva.no_reserva}, Mesa: {reserva.codigo_mesa}, Fecha: {new Date(reserva.fecha_reserva).toLocaleDateString()}, Precio: ${reserva.precio}
                     </li>
                 ))}
             </ul>
 
-            {detallesReserva.length > 0 && (
+            {detallesReserva && (
                 <div>
-                    <h2>Detalles de la Reserva</h2>
+                    <h2>Detalles de la Reserva No: {detallesReserva[0].no_reserva}</h2>
                     {detallesReserva.map((detalle) => (
                         <div key={detalle.id_detalle_reserva}>
-                            <p>Número de Reserva: {detalle.no_reserva}</p>
-                            <p>Código de Mesa: {detalle.codigo_mesa}</p>
-                            <p>Costo: ${detalle.costo}</p>
-                            <p>Fecha de Compra: {new Date(detalle.fecha_compra).toLocaleString()}</p>
-                            <p>Lugar de Compra: {detalle.lugar_compra}</p>
-                            <hr />
+                            <p><strong>Código de Mesa:</strong> {detalle.codigo_mesa}</p>
+                            <p><strong>Costo:</strong> ${detalle.costo}</p>
+                            <p><strong>Fecha de Compra:</strong> {new Date(detalle.fecha_compra).toLocaleString()}</p>
+                            <p><strong>Lugar de Compra:</strong> {detalle.lugar_compra}</p>
+                            <hr /> {/* Separador para cada mesa */}
                         </div>
                     ))}
                 </div>

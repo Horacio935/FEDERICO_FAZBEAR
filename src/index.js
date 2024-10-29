@@ -10,7 +10,7 @@ import Visualizar_facturas from './Visualizar_facturas';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <Detalle />
   </React.StrictMode>
 );
 

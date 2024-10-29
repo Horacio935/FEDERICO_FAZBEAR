@@ -110,6 +110,7 @@ router.get('/cliente/onebyid/:id', cliente.getClienteById);
 router.put('/cliente/update/:id', cliente.updateById);
 router.delete('/cliente/delete/:id', cliente.deleteById);
 router.get('/cliente/correo/:correo', cliente.getClienteByCorreo);
+router.get('/cliente/:correo', cliente.getIdClienteByCorreo);
 
 const DetalleFactura = require('../controllers/controller.factura.js');
 

@@ -224,3 +224,27 @@ exports.getClienteByCorreo = async (req, res) => {
         });
     }
 }
+
+exports.getIdClienteByCorreo = async (req, res) => {
+    const { correo } = req.query; // Asume que el correo se recibe como parámetro en la URL
+
+    if (!correo) {
+        return res.status(400).json({ message: 'Correo es requerido' });
+    }
+
+    try {
+        const cliente = await Cliente.findOne({
+            attributes: ['idCliente'],
+            where: { correo: correo }
+        });
+
+        if (!cliente) {
+            return res.status(404).json({ message: 'Cliente no encontrado' });
+        }
+
+        res.status(200).json({ idCliente: cliente.idCliente });
+    } catch (error) {
+        console.error('Error al obtener el idCliente:', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+};
